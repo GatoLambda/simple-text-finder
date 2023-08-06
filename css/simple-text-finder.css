@@ -1,0 +1,19 @@
+* {
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: cursive;
+}
+
+.stf-coincidence {
+    display: inline;
+    position: relative;
+    width: 100%;
+    background-color:rgb(251, 255, 0);
+    transition:all 0.5s ease;
+}
+
+.stf-coincidence::before {
+    content: '';
+    position: absolute;
+}

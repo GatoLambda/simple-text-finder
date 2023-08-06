@@ -1,19 +1,47 @@
 
 class SimpleTextFinder {
+
     historial = [];
-    constructor(wordInput, color, textInput){
-        this.wordInput = wordInput;
-        this.color = color;
-        this.textInput = textInput;
-        this.text = textInput.innerHTML;
+
+    constructor(wordInput,textInput, caseSensitive){
+        this.wordInput = document.querySelector(wordInput);
+        this.textInput = document.querySelector(textInput);
+        this.caseSensitive = caseSensitive;
+        this.text = this.textInput.innerHTML;
         this.historial.push(this.text);
         this.wordIndex = [];
         this.coincidences = 0;
+    }
+
+    init(){
         this.wordInput.addEventListener("keyup", e => {
             this.currentWord = e.target.value;
-            this.find();
+            this.clearText();
+            if(this.currentWord != "") this.find();
         });
     }
+
+    find(){
+        let replacedText = "";
+        if(!this.caseSensitive){
+            replacedText = this.text.replaceAll(this.currentWord, `<span class="stf-coincidence">${this.currentWord}</span>`);
+        }else{
+            let regEx = new RegExp(this.currentWord, "ig");
+            replacedText = this.text.replaceAll(regEx, '<span class="stf-coincidence">$&</span>');
+        }
+        this.textInput.innerHTML = replacedText;
+        let coincidences =  this.textInput.querySelectorAll(".stf-coincidence");
+        let index = 0;
+        coincidences.forEach( coincidence => {
+            coincidence.setAttribute("data-stf-coincidence",index);
+            index++;
+        });
+    }
+
+    clearText(){
+        this.textInput.innerHTML = this.historial[this.historial.length - 1];
+    }
+
     deleteAll(){
         console.log("Deleting all words");
     }
@@ -23,17 +51,11 @@ class SimpleTextFinder {
     recover(){
         console.log("Recovering the text before");
     }
-    find(){
-        let replacedText = this.text.replaceAll(this.currentWord, `<span class="coincidence" style="background-color:${this.color}">${this.currentWord}</span>`);
-        this.coincidences = replacedText.match(/coincidence/g).length;
-        this.textInput.innerHTML = replacedText;
-    }
+
     underline(){
         console.log("Underline words");
     }
 }
 
-simpleTextFinder = new SimpleTextFinder(document.getElementById("wordInput"), "red", document.getElementById("text"));
-
-console.log(SimpleTextFinder.currentWord);
-
+const simpleTextFinder = new SimpleTextFinder("#wordInput", "#text", true);
+simpleTextFinder.init();
